@@ -26,6 +26,7 @@ from codeintel.freshness.snapshot_binding import (
     clear_generation_snapshot,
     register_generation_snapshot,
 )
+from codeintel.storage.policy import DerivedStateValidationError
 
 _SAFE_GENERATION_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 _MAX_IGNORE_PATH_BYTES = 16 * 1024
@@ -374,11 +375,11 @@ class HardenedProductionGenerationBarrier(ProductionGenerationBarrier):
         try:
             fd = os.open(self.state_dir, os.O_RDONLY | directory | nofollow)
         except OSError as exc:
-            raise RuntimeError(f"trusted state directory cannot be opened safely: {exc}") from exc
+            raise DerivedStateValidationError(f"trusted state directory cannot be opened safely: {exc}") from exc
         try:
             info = os.fstat(fd)
             if not stat.S_ISDIR(info.st_mode):
-                raise RuntimeError("trusted state path is not a directory")
+                raise DerivedStateValidationError("trusted state path is not a directory")
             return fd
         except BaseException as error:
             try:
@@ -398,12 +399,12 @@ class HardenedProductionGenerationBarrier(ProductionGenerationBarrier):
                 try:
                     lock_fd = os.open("rebuild.lock", flags, 0o600, dir_fd=state_fd)
                 except OSError as exc:
-                    raise RuntimeError(
+                    raise DerivedStateValidationError(
                         f"production rebuild lock cannot be opened safely: {exc}"
                     ) from exc
                 info = os.fstat(lock_fd)
                 if not stat.S_ISREG(info.st_mode):
-                    raise RuntimeError("production rebuild lock must be a regular file")
+                    raise DerivedStateValidationError("production rebuild lock must be a regular file")
                 safe_fchmod(lock_fd, 0o600)
                 fcntl.flock(lock_fd, fcntl.LOCK_EX)
                 self._rebuild_lock_file = lock_fd
@@ -418,12 +419,12 @@ class HardenedProductionGenerationBarrier(ProductionGenerationBarrier):
         else:
             lock_path = Path(self.state_dir) / "rebuild.lock"
             if is_symlink_or_reparse(lock_path):
-                raise RuntimeError("production rebuild lock must not be a symlink")
+                raise DerivedStateValidationError("production rebuild lock must not be a symlink")
             lock_fd = os.open(str(lock_path), os.O_CREAT | os.O_RDWR | getattr(os, "O_BINARY", 0), 0o600)
             info = os.fstat(lock_fd)
             if not stat.S_ISREG(info.st_mode):
                 os.close(lock_fd)
-                raise RuntimeError("production rebuild lock must be a regular file")
+                raise DerivedStateValidationError("production rebuild lock must be a regular file")
             fcntl.flock(lock_fd, fcntl.LOCK_EX)
             self._rebuild_lock_file = lock_fd
 
@@ -443,7 +444,7 @@ class HardenedProductionGenerationBarrier(ProductionGenerationBarrier):
                     dir_fd=state_fd,
                 )
             except OSError as exc:
-                raise RuntimeError(
+                raise DerivedStateValidationError(
                     f"generation lease directory cannot be opened safely: {exc}"
                 ) from exc
         finally:
@@ -451,7 +452,7 @@ class HardenedProductionGenerationBarrier(ProductionGenerationBarrier):
         try:
             info = os.fstat(lease_dir_fd)
             if not stat.S_ISDIR(info.st_mode):
-                raise RuntimeError("generation lease path must be a directory")
+                raise DerivedStateValidationError("generation lease path must be a directory")
             safe_fchmod(lease_dir_fd, 0o700)
             return lease_dir_fd
         except BaseException as error:
@@ -482,12 +483,12 @@ class HardenedProductionGenerationBarrier(ProductionGenerationBarrier):
                         dir_fd=lease_dir_fd,
                     )
                 except OSError as exc:
-                    raise RuntimeError(
+                    raise DerivedStateValidationError(
                         f"generation lease cannot be opened safely: {exc}"
                     ) from exc
                 info = os.fstat(fd)
                 if not stat.S_ISREG(info.st_mode):
-                    raise RuntimeError("generation lease must be a regular file")
+                    raise DerivedStateValidationError("generation lease must be a regular file")
                 safe_fchmod(fd, 0o600)
                 result = fd
                 fd = None
@@ -502,23 +503,23 @@ class HardenedProductionGenerationBarrier(ProductionGenerationBarrier):
         else:
             lease_dir = Path(self.state_dir) / "generation_leases"
             if is_symlink_or_reparse(lease_dir):
-                raise RuntimeError("generation lease directory must not be a symlink")
+                raise DerivedStateValidationError("generation lease directory must not be a symlink")
             lease_dir.mkdir(parents=True, exist_ok=True)
             lease_path = lease_dir / self._lease_filename(generation_id)
             if is_symlink_or_reparse(lease_path):
-                raise RuntimeError("generation lease must not be a symlink")
+                raise DerivedStateValidationError("generation lease must not be a symlink")
             fd = os.open(str(lease_path), os.O_CREAT | os.O_RDWR | getattr(os, "O_BINARY", 0), 0o600)
             info = os.fstat(fd)
             if not stat.S_ISREG(info.st_mode):
                 os.close(fd)
-                raise RuntimeError("generation lease must be a regular file")
+                raise DerivedStateValidationError("generation lease must be a regular file")
             return fd
 
     def _generation_lease_path(self, generation_id: str) -> str:
         if sys.platform == "win32":
             lease_dir = Path(self.state_dir) / "generation_leases"
             if is_symlink_or_reparse(lease_dir):
-                raise RuntimeError("generation lease directory must not be a symlink")
+                raise DerivedStateValidationError("generation lease directory must not be a symlink")
             return str(lease_dir / self._lease_filename(generation_id))
         lease_dir_fd = self._open_lease_dir_fd()
         os.close(lease_dir_fd)

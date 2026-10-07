@@ -52,9 +52,18 @@ print(json.dumps({'installed_python_files':files,'versions':{d.metadata['Name']:
 '''
 
 
-def validate_source(source, manifest):
+def validate_source(source, manifest, *, allow_generated_bytecode=False):
     # Exact source manifest, no unknown files, no private roots or symlinks.
     actual = {path.relative_to(source).as_posix() for path in source.rglob('*') if path.is_file()}
+    if allow_generated_bytecode:
+        # Nested isolated test processes can write CPython caches even when the
+        # gate disables bytecode. Only caches for manifest-listed Python source
+        # are generated validation artifacts; unrelated files still fail closed.
+        generated = {Path(importlib.util.cache_from_source(str(source / name), optimization=level))
+                     .relative_to(source).as_posix()
+                     for name in manifest['files'] if name.endswith('.py')
+                     for level in ('', '1', '2')}
+        actual -= generated
     require(actual == set(manifest['files']) | {'SNAPSHOT_MANIFEST.json'},
             'Source validation failed: manifest file set differs')
     require(not any(path.is_symlink() for path in source.rglob('*')),
@@ -76,6 +85,28 @@ def validate_source(source, manifest):
                     'Source validation failed: ' + str((file.name, href)))
             links.append([file.relative_to(source).as_posix(), href])
     return links
+
+
+def validate_runtime_origins(report, expected):
+    """Recorded import locations must contain the accepted runtime bytes."""
+    for key in ('collection', 'execution_collection'):
+        origins = report[key]['runtime_origins']
+        require(bool(origins), 'Installed runtime origins are missing')
+        for origin in origins.values():
+            name = 'codeintel/' + origin['path']
+            require(expected.get(name) == origin['sha256'],
+                    'Installed runtime origin bytes differ: ' + name)
+
+
+def validate_installed_runtime(runtime_root, expected):
+    """Check all shipped runtime languages, including files not imported by tests."""
+    root = Path(runtime_root)
+    paths = list(root.rglob('*'))
+    require(not root.is_symlink() and not any(path.is_symlink() for path in paths),
+            'Installed runtime contains a symlink')
+    actual = {'codeintel/' + path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+              for path in paths if path.is_file() and path.suffix in ('.py', '.js', '.ts')}
+    require(actual == expected, 'Installed runtime file set or bytes differ from accepted source')
 
 
 def validate_wheel(wheel, source):
@@ -125,6 +156,7 @@ def setup(args):
         replacements=[(str(out), 'VALIDATION_OUTPUT'), (str(source), 'CURATED_SOURCE'),
                       (str(Path(python).parent.parent), 'CLEAN_VENV')],
         receipt_base={'schema': 'codeintel-curated-install-attempt-v2'}, total_seconds=args.suite_timeout + GATE_OVERHEAD_SECONDS)
+    runner.env['PYTHONDONTWRITEBYTECODE'] = '1'
     return source, out, python, cli, runner
 
 
@@ -141,9 +173,12 @@ def main(argv=None):
     previous_handler = contract.install_cancellation_handler()
     stage = 'source-validation'
     try:
-        manifest = json.loads((source / 'SNAPSHOT_MANIFEST.json').read_text())
+        manifest_bytes = (source / 'SNAPSHOT_MANIFEST.json').read_bytes()
+        manifest = json.loads(manifest_bytes)
         runner.receipt_base['source_commit'] = manifest.get('source_commit')
         links = validate_source(source, manifest)
+        expected_runtime = {name: digest for name, digest in manifest['files'].items()
+                            if name.startswith('codeintel/') and Path(name).suffix in ('.py', '.js', '.ts')}
         require(args.source_receipt is not None, 'A passing --source-receipt is required before installed validation')
         receipt_bytes = args.source_receipt.read_bytes()
         source_receipt = json.loads(receipt_bytes)
@@ -162,6 +197,7 @@ def main(argv=None):
         runner.run(stage, [python, '-m', 'pip', 'check'])
         stage = 'installed-probe'
         runtime = json.loads(runner.run(stage, [python, '-I', '-c', PROBE, str(source)]).stdout)
+        validate_installed_runtime(runtime['runtime_root'], expected_runtime)
         versions = {key.lower().replace('_', '-'): value for key, value in runtime['versions'].items()}
         for lock in ('requirements-lab.lock', 'requirements-lab-dev.lock'):
             for line in (source / lock).read_text().splitlines():
@@ -185,12 +221,18 @@ def main(argv=None):
         stage = 'installed-acceptance'
         report = contract.run_pytest_suite(runner, python=python, source=source,
             runtime_root=runtime['runtime_root'], mode='installed', junit_name='installed.junit.xml', timeout_seconds=args.suite_timeout)
+        validate_runtime_origins(report, expected_runtime)
         contract.require_matching_cases(source_receipt, report)
         stage = 'claims-from-extracted-source'
         runner.run(stage, [python, str(source / 'scripts/reproduce_claims.py'), '--output', str(out / 'claim-reproduction')])
         claim_report = json.loads((out / 'claim-reproduction/claims.json').read_text())
         require(claim_report['status'] == 'PASS' and claim_report['source_commit'] == manifest['source_commit'],
                 'Claim reproduction failed or reports another source commit')
+        stage = 'final-source-runtime-validation'
+        require((source / 'SNAPSHOT_MANIFEST.json').read_bytes() == manifest_bytes,
+                'Source manifest changed during installed validation')
+        validate_source(source, manifest, allow_generated_bytecode=True)
+        validate_installed_runtime(runtime['runtime_root'], expected_runtime)
         receipt = {'schema': 'codeintel-curated-install-v3', 'status': 'PASS',
                    'source_commit': manifest['source_commit'], 'files_in_manifest': len(manifest['files']),
                    'local_markdown_links_checked': len(links), 'wheel_sha256': hashlib.sha256(wheel.read_bytes()).hexdigest(),
@@ -198,6 +240,8 @@ def main(argv=None):
                    'runtime': json.loads(runner.clean(json.dumps(runtime))), 'tests': report['junit'], **report,
                    'source_receipt_sha256': hashlib.sha256(receipt_bytes).hexdigest(),
                    'source_installed_case_ids_equal': True, 'source_installed_collection_ids_equal': True,
+                   'source_revalidated_after_execution': True, 'installed_runtime_revalidated_after_execution': True,
+                   'runtime_origin_hashes_equal': True,
                    'evaluation_rows': len(evaluation['rows']), 'contract_checks': len(evaluation['checks']),
                    'runs': runner.runs, 'deadline_seconds': args.suite_timeout + GATE_OVERHEAD_SECONDS, 'inference_calls': 0,
                    'network_during_build_install': False, 'claim_in_process_socket_primitives_blocked': True,

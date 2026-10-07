@@ -439,6 +439,18 @@ class TreeSitterCodeParser:
 
         keywords = {"if", "for", "while", "catch", "switch", "import", "export", "function", "return", "typeof", "void", "new", "delete", "async", "await"}
 
+        def type_parameter_names(node: tree_sitter.Node) -> set[str]:
+            parameters = node.child_by_field_name("type_parameters")
+            if parameters is None:
+                return set()
+            return {
+                get_node_text(name)
+                for parameter in parameters.named_children
+                if (name := parameter.child_by_field_name("name")) is not None
+            }
+
+        scope_type_parameters: Dict[str, set[str]] = {}
+
         def extract_calls(parent_ent_id: str, body_node: Optional[tree_sitter.Node], enclosing_cls_id: Optional[str] = None, enclosing_cls_name: Optional[str] = None, type_map: Optional[Dict[str, str]] = None) -> None:
             if not body_node:
                 return
@@ -446,7 +458,8 @@ class TreeSitterCodeParser:
             nested_scopes = {
                 "function_declaration", "function_expression", "arrow_function",
                 "generator_function_declaration", "generator_function",
-                "class_declaration", "class", "method_definition", "interface_declaration",
+                "class_declaration", "abstract_class_declaration", "class",
+                "method_definition", "interface_declaration",
             }
 
             def discard_binding(binding: Optional[tree_sitter.Node]) -> None:
@@ -458,6 +471,14 @@ class TreeSitterCodeParser:
                     elif part.type in ("object_pattern", "array_pattern", "pair_pattern",
                                        "assignment_pattern", "object_assignment_pattern", "rest_pattern"):
                         pending.extend(part.named_children)
+                    elif part.type in ("parenthesized_expression", "non_null_expression",
+                                       "as_expression", "satisfies_expression", "type_assertion"):
+                        # These wrappers preserve the written binding. Follow
+                        # only their value expression, not assertion type names
+                        # or member receivers whose binding is unchanged.
+                        values = [child for child in part.named_children if child.type != "comment"]
+                        if values:
+                            pending.append(values[-1] if part.type == "type_assertion" else values[0])
 
             # This extractor is not a lexical/dataflow binding engine. A local
             # declaration or reassignment can invalidate a parameter's type.
@@ -470,7 +491,7 @@ class TreeSitterCodeParser:
                     # Declarations bind their names in the enclosing scope,
                     # although their bodies must not inherit this call owner.
                     if current.type in ("function_declaration", "generator_function_declaration",
-                                        "class_declaration"):
+                                        "class_declaration", "abstract_class_declaration"):
                         discard_binding(current.child_by_field_name("name"))
                     continue
                 field = {
@@ -572,6 +593,7 @@ class TreeSitterCodeParser:
 
                 # Extract local parameter types
                 local_types: Dict[str, str] = {}
+                shadowed_types = scope_type_parameters.get(parent_id, set()) | type_parameter_names(node)
                 if params_node:
                     for p_child in params_node.named_children:
                         p_name = None
@@ -581,7 +603,10 @@ class TreeSitterCodeParser:
                                 p_name = get_node_text(p_sub)
                             elif p_sub.type in ("type_annotation", "type_identifier"):
                                 p_type = get_node_text(p_sub).lstrip(":").strip()
-                        if p_name and p_type:
+                        # A local generic name is not the same-named concrete
+                        # class elsewhere in the syntax universe. Constraints
+                        # do not establish the runtime implementation either.
+                        if p_name and p_type and p_type not in shadowed_types:
                             local_types[p_name] = p_type
 
                 if name:
@@ -655,6 +680,9 @@ class TreeSitterCodeParser:
                     span = get_span(node)
                     kind = EntityKind.INTERFACE if t == "interface_declaration" else EntityKind.CLASS
                     ent_id = definition_id(qname, kind)
+                    scope_type_parameters[ent_id] = (
+                        scope_type_parameters.get(parent_id, set()) | type_parameter_names(node)
+                    )
                     sl = span[0]
                     sig_line = raw_lines[sl - 1].strip() if 0 <= sl - 1 < len(raw_lines) else f"class {name}"
 

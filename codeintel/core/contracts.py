@@ -1,10 +1,10 @@
 """Shared limits for offline indexing, storage and literal retrieval."""
 
-# Bump whenever canonical parser/chunk ownership semantics change. v5 also
-# distinguishes repeated property declarations and prevents typed receiver
-# evidence from crossing shadowed bindings or nested callable scopes.
+# Bump whenever canonical parser/chunk ownership semantics change. v6 also
+# drops typed receiver evidence for transparent writes and generic shadows,
+# and excludes nested abstract-class bodies from outer call ownership.
 # Previous generations must be rebuilt, including unchanged source snapshots.
-INDEX_CHUNK_POLICY_VERSION = "utf8-entity-partition-v5-definition-scope-provenance"
+INDEX_CHUNK_POLICY_VERSION = "utf8-entity-partition-v6-typed-scope-provenance"
 # Snapshot paths may contain colons/newlines. Frame path/hash pairs explicitly;
 # changing this format also changes the persisted index build identity.
 INDEX_SNAPSHOT_FORMAT_VERSION = "codeintel-snapshot-v2-json-pairs"

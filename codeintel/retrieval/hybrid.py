@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 from codeintel.core.identity import canonical_hash, make_evidence_id, normalize_repo_rel_path
 from codeintel.core.models import Chunk, Evidence, TrustClass
 from codeintel.storage.base import GraphStore, LexicalIndex
+from codeintel.storage.policy import DerivedStateValidationError
 
 
 # These acquisition limits are distinct from the lab's 32 returned candidates.
@@ -154,7 +155,7 @@ class HybridRetriever:
         if not isinstance(content, str) or not isinstance(content_hash, str):
             raise RuntimeError("retrieval backend returned invalid literal chunk provenance")
         if content_hash != canonical_hash(content):
-            raise RuntimeError(
+            raise DerivedStateValidationError(
                 "retrieval backend returned literal chunk bytes with mismatched content hash"
             )
         path = self._canonical_evidence_path(

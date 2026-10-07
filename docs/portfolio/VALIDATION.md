@@ -58,6 +58,10 @@ must match. The installed gate checks exact delivered hashes, local Markdown
 links, license metadata/notices, exact wheel runtime membership and byte parity (Python and the JS/TS fixtures),
 import origins, demo and
 evaluation goldens, reproduced claims, and the same collected/executed identities.
+Before reporting PASS, installed acceptance rechecks the original manifest, all
+delivered source bytes and the full installed Python/JS/TS runtime. Observed
+collection/execution import hashes must also match the accepted runtime bytes.
+These are point-in-time checks, not protection against changes after validation.
 There is no fixed minimum case count: editorial migration changes the collection
 honestly, without removing runtime regressions or rewriting historical receipts.
 

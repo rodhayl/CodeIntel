@@ -263,12 +263,13 @@ class CollectionPlugin:
 
 
 PYTEST_LAUNCHER = """import importlib.util,sys
+from pathlib import Path
 helper,source,output,runtime,collect_only,junit,mode=sys.argv[1:]
 if mode=='source':sys.path.insert(0,source)
 spec=importlib.util.spec_from_file_location('codeintel_gate_contract',helper)
 contract=importlib.util.module_from_spec(spec);spec.loader.exec_module(contract)
 import pytest
-args=['-q','--strict-markers','--import-mode=importlib','-o','pythonpath=','-o','addopts=','--rootdir='+source]
+args=['-q','--strict-markers','--import-mode=importlib','-o','pythonpath=','-o','addopts=','-o','cache_dir='+str(Path(output).parent/'pytest-cache'),'--rootdir='+source]
 if collect_only=='yes':args += ['--collect-only']
 args += [source+'/tests']
 if junit:args += ['--junitxml='+junit]

@@ -8,8 +8,9 @@ from typing import Dict, Set
 
 import apsw
 
+from codeintel.core.models import EntityKind, RelationType, TrustClass
 from codeintel.core.security import MAX_STATE_LAYOUT_MARKER_BYTES, STATE_LAYOUT_VERSION
-from codeintel.safe_artifacts import read_regular_file_bounded
+from codeintel.safe_artifacts import read_regular_file_bounded, strict_json_loads
 
 class DerivedStateValidationError(RuntimeError):
     """Expected incompatible/corrupt derived state; safe to present CLI recovery."""
@@ -234,6 +235,95 @@ def validate_production_schema(connection: apsw.Connection) -> None:
         _validate_generation_foreign_keys(connection)
 
 
+def decode_stored_json(raw, *, label: str, shape: type):
+    """Decode known persisted JSON fields without hiding programming exceptions."""
+    if raw is None or raw == "":
+        return shape()
+    if not isinstance(raw, str):
+        raise DerivedStateValidationError(f"Stored {label} must be JSON text; rebuild required")
+    try:
+        value = strict_json_loads(raw)
+    except (ValueError, RecursionError) as exc:
+        raise DerivedStateValidationError(f"Stored {label} is invalid JSON; rebuild required") from exc
+    if not isinstance(value, shape) or (
+        shape is list and any(not isinstance(item, str) for item in value)
+    ):
+        raise DerivedStateValidationError(f"Stored {label} has an invalid JSON shape; rebuild required")
+    return value
+
+
+def validate_stored_span(row) -> None:
+    coordinates = tuple(row[name] for name in ("start_line", "start_col", "end_line", "end_col"))
+    if any(type(value) is not int for value in coordinates):
+        raise DerivedStateValidationError("Stored span coordinates must be integers; rebuild required")
+    start_line, start_col, end_line, end_col = coordinates
+    if start_line < 1 or end_line < 1 or start_col < 0 or end_col < 0 or coordinates[:2] > coordinates[2:]:
+        raise DerivedStateValidationError("Stored span coordinates are invalid; rebuild required")
+
+
+def validate_production_rows(connection: apsw.Connection) -> None:
+    """Reject malformed persisted scalar/JSON values before writable admission.
+
+    SQLite affinity does not enforce Python's row-decoding contracts. Inspect
+    types in SQL so admission never materializes whole source bodies in Python.
+    Staging rows may be incomplete across tables, but each present row must decode.
+    """
+    text_columns = {
+        "generations": ("generation_id", "repo_id", "snapshot_hash"),
+        "files": ("file_id", "repo_id", "generation_id", "rel_path", "content_hash"),
+        "entities": ("entity_id", "repo_id", "file_id", "generation_id", "name", "qualified_name", "kind"),
+        "relations": ("relation_id", "repo_id", "generation_id", "source_id", "target_id", "rel_type", "trust_class", "file_id"),
+        "chunks": ("chunk_id", "file_id", "generation_id", "content", "content_hash"),
+    }
+    nullable_text = {"entities": ("docstring", "signature"), "chunks": ("rel_path",)}
+    enums = {"entities": {"kind": EntityKind},
+             "relations": {"rel_type": RelationType, "trust_class": TrustClass}}
+    with fts_read_snapshot(connection):
+        for table, columns in text_columns.items():
+            invalid = [f"typeof({name}) <> 'text'" for name in columns]
+            invalid.extend(f"{name} IS NOT NULL AND typeof({name}) <> 'text'"
+                           for name in nullable_text.get(table, ()))
+            if table == "generations":
+                invalid.extend(("typeof(sequence) <> 'integer'", "sequence < 1",
+                                "typeof(is_active) <> 'integer'", "is_active NOT IN (0, 1)"))
+            elif table == "files":
+                invalid.extend(("typeof(size_bytes) <> 'integer'", "size_bytes < 0"))
+            else:
+                invalid.extend(f"typeof({name}) <> 'integer'" for name in
+                               ("start_line", "start_col", "end_line", "end_col"))
+                invalid.extend(("start_line < 1", "end_line < 1", "start_col < 0", "end_col < 0",
+                                "(start_line, start_col) > (end_line, end_col)"))
+            parameters = []
+            for column, enum in enums.get(table, {}).items():
+                values = [item.value for item in enum]
+                invalid.append(f"{column} NOT IN ({','.join('?' for _ in values)})")
+                parameters.extend(values)
+            if table in ("entities", "relations", "chunks"):
+                column = "entity_ids_json" if table == "chunks" else "properties_json"
+                expected = "array" if table == "chunks" else "object"
+                elements = (f"EXISTS (SELECT 1 FROM json_each({column}) WHERE type <> 'text')"
+                            if table == "chunks" else "0")
+                invalid.append(
+                    f"CASE WHEN {column} IS NULL OR {column} = '' THEN 0 "
+                    f"WHEN typeof({column}) <> 'text' THEN 1 "
+                    f"WHEN NOT json_valid({column}) THEN 1 "
+                    f"WHEN json_type({column}) <> '{expected}' THEN 1 ELSE {elements} END"
+                )
+            predicate = " OR ".join(f"({part})" for part in invalid)
+            if connection.execute(f"SELECT 1 FROM {table} WHERE {predicate} LIMIT 1", tuple(parameters)).fetchone():
+                raise DerivedStateValidationError(f"Stored {table} row is malformed; rebuild required")
+            if table in ("entities", "relations", "chunks"):
+                # SQLite accepts JSON escapes for lone UTF-16 surrogates. Python
+                # can decode those strings, but APSW cannot later bind them as
+                # UTF-8 identities. Inspect only escaped metadata, one row at a
+                # time, before a writable connection can checkpoint bad state.
+                for row in connection.execute(
+                    f"SELECT {column} FROM {table} WHERE instr({column}, ?) > 0", ("\\u",)
+                ):
+                    decode_stored_json(_row_col(row, 0, column), label=column,
+                                       shape=list if table == "chunks" else dict)
+
+
 def _assert_single_active_generation(connection: apsw.Connection) -> None:
     row = connection.execute(
         "SELECT repo_id, COUNT(*) AS active_count "
@@ -263,6 +353,7 @@ def _assert_database_integrity(connection: apsw.Connection) -> None:
             "CodeIntel derived-state foreign-key integrity failed; rebuild required"
         )
     validate_fts_coherence(connection)
+    validate_production_rows(connection)
 
 
 def validate_fts_coherence(connection: apsw.Connection, generation_id: str | None = None) -> None:

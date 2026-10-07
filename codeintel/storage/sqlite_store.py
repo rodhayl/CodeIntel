@@ -481,7 +481,7 @@ class SQLiteStore(GraphStore, LexicalIndex, GenerationStore):
         params.extend([generation_id, limit])
         # Indexed entities normally carry rel_path. Match exact_sort's fallback
         # to the generation-bound file table when that hint is absent.
-        path = "COALESCE(NULLIF(json_extract(e.properties_json, '$.rel_path'), ''), f.rel_path, '~')"
+        path = "COALESCE(NULLIF(json_extract(NULLIF(e.properties_json, ''), '$.rel_path'), ''), f.rel_path, '~')"
         lower = f"lower({path})"
         test = " OR ".join(f"instr({lower}, '{part}') > 0" for part in
                            ("/test", "test_", "_test", "tests/"))
@@ -810,7 +810,7 @@ class SQLiteStore(GraphStore, LexicalIndex, GenerationStore):
         start_line, start_col, end_line, end_col = entity.span
         params = [entity.file_id, generation_id]
         if preferred_only:
-            where = "EXISTS (SELECT 1 FROM json_each(c.entity_ids_json) WHERE value = ?)"
+            where = "EXISTS (SELECT 1 FROM json_each(NULLIF(c.entity_ids_json, '')) WHERE value = ?)"
             params.append(entity.entity_id)
             order = (
                 "CASE WHEN (start_line, start_col, end_line, end_col) = (?, ?, ?, ?) THEN 0 ELSE 1 END, "

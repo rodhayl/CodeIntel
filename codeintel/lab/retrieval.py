@@ -58,14 +58,34 @@ def serialize(value: dict) -> bytes:
                        allow_nan=False) + "\n").encode("utf-8")
 
 
+def _require_utf8_path(path: Path, *, code: str, recovery: str) -> None:
+    try:
+        str(path).encode("utf-8")
+    except UnicodeError as exc:
+        raise LabError(code, recovery) from exc
+
+
 def open_service(repo: Path, state: Path):
     if not repo.is_dir():
         raise LabError("REPOSITORY_MISSING", "Choose an existing source directory.")
+    resolved_repo = repo.resolve()
+    _require_utf8_path(resolved_repo, code="SOURCE_UNAVAILABLE",
+                       recovery="Use a repository path with valid UTF-8 spelling, then index or query again.")
+    # APSW accepts UTF-8 filenames. Validate the effective path before the
+    # service creates/chmods a state directory or writes its layout marker.
+    # Expansion/resolution here is read-only: pass the original path below so
+    # validate_trusted_state_dir still observes every lexical symlink ancestor.
+    recovery = "Choose a state directory with a valid UTF-8 path outside the repository."
+    try:
+        expanded_state = state.expanduser()
+        _require_utf8_path(expanded_state.resolve(), code="INVALID_STATE_PATH", recovery=recovery)
+    except RuntimeError as exc:
+        raise LabError("INVALID_STATE_PATH", "Choose a resolvable, non-symlink state path outside the repository.") from exc
     # Deliberately ignore provider environment and local discovery for this lab.
     # Preserve symlinks for validate_trusted_state_dir; it canonicalizes only
     # after checking the requested final component and every ancestor.
     try:
-        return create_default_service(str(repo.resolve()), state_dir=str(state))
+        return create_default_service(str(resolved_repo), state_dir=str(state))
     except SourceInputError as exc:
         raise source_input_error(exc) from exc
 

@@ -1,6 +1,5 @@
 """Production SQLiteStore with explicit per-instance lifecycle policy."""
 
-import json
 import math
 import os
 import re
@@ -12,7 +11,7 @@ import apsw
 
 from codeintel.core.contracts import MAX_TASK_QUERY_BYTES
 from codeintel.core.identity import canonical_hash, make_chunk_id
-from codeintel.core.models import Chunk
+from codeintel.core.models import Chunk, EntityKind
 from codeintel.core.security import STATE_LAYOUT_VERSION
 from codeintel.storage.generation_metadata import (
     MAX_GENERATION_METADATA_BYTES,
@@ -23,6 +22,10 @@ from codeintel.storage.generation_metadata import (
 from codeintel.storage.lifecycle import cleanup_orphan_vector_artifacts
 from codeintel.storage.policy import (
     CODEINTEL_DB_BUSY_TIMEOUT_MS,
+    DerivedStateValidationError,
+    decode_stored_json,
+    validate_stored_span,
+    validate_production_rows,
     configure_codeintel_connection,
     fts_expression,
     fts_read_snapshot,
@@ -52,9 +55,9 @@ class ProductionSQLiteStore(BaseSQLiteStore):
         if os.path.lexists(db_text):
             st = os.lstat(db_text)
             if stat.S_ISLNK(st.st_mode):
-                raise RuntimeError("CodeIntel db.sqlite must not be a symlink")
+                raise DerivedStateValidationError("CodeIntel db.sqlite must not be a symlink")
             if not stat.S_ISREG(st.st_mode):
-                raise RuntimeError("CodeIntel db.sqlite must be a regular file")
+                raise DerivedStateValidationError("CodeIntel db.sqlite must be a regular file")
 
         preflight = None
         if db.exists() and db.stat().st_size > 0:
@@ -65,6 +68,7 @@ class ProductionSQLiteStore(BaseSQLiteStore):
             try:
                 readonly.set_busy_timeout(CODEINTEL_DB_BUSY_TIMEOUT_MS)
                 validate_production_schema(readonly)
+                validate_production_rows(readonly)
             except BaseException as readonly_error:
                 try:
                     readonly.close()
@@ -546,6 +550,21 @@ class ProductionSQLiteStore(BaseSQLiteStore):
 
 
 
+    def _row_to_entity(self, row):
+        validate_stored_span(row)
+        try:
+            EntityKind(row["kind"])
+        except ValueError as exc:
+            raise DerivedStateValidationError("Stored entity kind is invalid; rebuild required") from exc
+        decode_stored_json(row["properties_json"], label="entity properties_json", shape=dict)
+        return super()._row_to_entity(row)
+
+    @staticmethod
+    def _row_to_chunk(row):
+        validate_stored_span(row)
+        decode_stored_json(row["entity_ids_json"], label="chunk entity_ids_json", shape=list)
+        return BaseSQLiteStore._row_to_chunk(row)
+
     @staticmethod
     def _validate_fts_request(query: str, limit: int, generation_id: Optional[str]) -> str:
         if not isinstance(query, str):
@@ -674,19 +693,9 @@ class ProductionSQLiteStore(BaseSQLiteStore):
             rank = float(row["rank"])
             if not math.isfinite(rank):
                 raise RuntimeError("FTS5 returned a non-finite BM25 rank")
-            entity_ids = json.loads(row["entity_ids_json"]) if row["entity_ids_json"] else []
-            if not isinstance(entity_ids, list) or any(not isinstance(value, str) for value in entity_ids):
-                raise RuntimeError("Stored chunk entity_ids_json is not a string list")
-            chunk = Chunk(
-                chunk_id=row["chunk_id"],
-                file_id=row["file_id"],
-                generation_id=row["generation_id"],
-                rel_path=row["rel_path"] if row["rel_path"] else row["file_id"],
-                span=(row["start_line"], row["start_col"], row["end_line"], row["end_col"]),
-                content=row["content"],
-                content_hash=row["content_hash"],
-                entity_ids=entity_ids,
-            )
+            chunk = self._row_to_chunk(row)
+            if not chunk.rel_path:
+                chunk.rel_path = chunk.file_id
             results.append((chunk, -rank))
         return results
 
