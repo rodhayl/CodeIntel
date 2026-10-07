@@ -1,0 +1,22 @@
+CodeIntel | offline contract evaluation
+
+ranked: 12 / 12 expected outcomes
+literal_scan: 12 / 12 expected outcomes
+Contracts: 10 / 10 passed
+
+  PASS duplicates
+  PASS budget_1024: BUDGET_EXHAUSTED (653 bytes)
+  PASS budget_2048: OK (1553 bytes)
+  PASS budget_4096: OK (1553 bytes)
+  PASS budget_8192: OK (1553 bytes)
+  PASS stale_packet
+  PASS invalidation
+  PASS delete
+  PASS add
+  PASS invalid_budget
+
+Result: PASS | model calls: 0
+Both arms start from the same index, queries, serializer and budget; ranked exact symbols may expand.
+Four authored cases, no blind holdout, no generalization or token conversion.
+A matching outcome count does not establish ranking superiority or agent savings.
+Use --format json for individual rows and measured durations (the default).

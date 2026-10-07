@@ -1,0 +1,82 @@
+{
+  "schema": "codeintel-evidence-index-v2",
+  "updated": "2026-10-06",
+  "cleanup_baseline": {
+    "remote_commit": "1e66f05a59574ce05b2c2b6de280f8c53a79a340",
+    "tree": "595dcc95fc631cb9837e9c927612c47282abf756",
+    "scope": "Pre-cleanup source identity, not acceptance of edited product tree"
+  },
+  "current_product_acceptance": {
+    "status": "REQUIRES_EXACT_CANDIDATE_RECEIPTS",
+    "source_commit": null,
+    "software_cases_per_execution": null
+  },
+  "historical_acceptance": [
+    {
+      "commit": "0af24264e0203571b2be1eba1301407808241a76",
+      "tree": "be78fcdbf49e8d08ea80eebe303bed68f9025e01",
+      "date": "2026-10-05",
+      "software_cases_per_execution": 1236,
+      "runtime_python_files": 46,
+      "role": "latest_maintainer_software_acceptance",
+      "originals_access": "private historical repository or separately retained evidence; not delivered product files"
+    },
+    {
+      "commit": "1d69a6126859ae83952919d164c06a5be306d2aa",
+      "tree": "26a81831836cc17a50ff858b7b84cbed2eec56f6",
+      "date": "2026-10-05",
+      "software_cases_per_execution": 1218,
+      "runtime_python_files": 46,
+      "role": "latest_independent_followup",
+      "originals_access": "private historical repository or separately retained evidence; not delivered product files"
+    },
+    {
+      "commit": "2a142a73c2e53f125a338a4a48d7f9c56ae908b3",
+      "date": "2026-10-05",
+      "software_cases_per_execution": 1218,
+      "runtime_python_files": 46,
+      "role": "maintainer_software_acceptance_2a142a7",
+      "originals_access": "private historical repository or separately retained evidence; not delivered product files"
+    },
+    {
+      "commit": "e74cb1f0a6e5b48eba8f68c223c55f5f9446c833",
+      "date": "2026-10-05",
+      "software_cases_per_execution": 1198,
+      "runtime_python_files": 46,
+      "role": "latest_independently_audited_baseline",
+      "originals_access": "private historical repository or separately retained evidence; not delivered product files"
+    },
+    {
+      "commit": "b6c417fd3595256f8a89c4bfecf404bd191aa9bc",
+      "date": "2026-10-04",
+      "software_cases_per_execution": 776,
+      "runtime_python_files": 45
+    }
+  ],
+  "interpretation": [
+    "Counts belong only to each named source; software cases are not independent agent tasks.",
+    "Historical original bytes are preserved privately and in private Git history, outside active product source.",
+    "Current inventory and new gate outputs bind the selected product source; no inherited current PASS.",
+    "Hashes bind bytes, not producer authenticity. No current agent token/cost/time benefit is demonstrated."
+  ],
+  "preserved_original_receipts": [
+    {
+      "historical_commit": "b6c417fd3595256f8a89c4bfecf404bd191aa9bc",
+      "original_path": "verification.json",
+      "sha256": "1f34e094f116ab7976ada31ca77922345f0883f4ae1d28105c10879b5c812a8c",
+      "access": "private preserved original; not a current product input"
+    },
+    {
+      "historical_commit": "b6c417fd3595256f8a89c4bfecf404bd191aa9bc",
+      "original_path": "installed-verification.json",
+      "sha256": "0d88ffe3e4a6616bae43d252f8a4aab89f372bd3955d7f8a780185a7a2e15c24",
+      "access": "private preserved original; not a current product input"
+    },
+    {
+      "historical_commit": "b6c417fd3595256f8a89c4bfecf404bd191aa9bc",
+      "original_path": "claims.json",
+      "sha256": "cae3426e7875bc93f0a0ee34a41248480fb24eee22927d6ad696c086a8568044",
+      "access": "private preserved original; not a current product input"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+# Standard sdist: build source only. The curated builder owns review archives.
+include README.package.md requirements-lab.lock LICENSE THIRD_PARTY_NOTICES.md
+exclude README.md README.es.md requirements-lab-dev.lock AGENTS.md
+prune tests
+prune scripts
+prune docs
+global-exclude __pycache__ *.py[cod] *.log *.jsonl

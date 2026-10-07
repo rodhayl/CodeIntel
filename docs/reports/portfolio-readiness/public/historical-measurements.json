@@ -1,0 +1,79 @@
+{
+  "schema": "portfolio-historical-review-v1",
+  "review_date": "2026-10-04",
+  "native_ab": {
+    "tasks": 1,
+    "pairs": 2,
+    "model": "gpt-5.6-luna",
+    "effort": "low",
+    "totals": {
+      "baseline": 179433,
+      "treatment": 304636
+    },
+    "token_increase_percent": 69.77701983470153,
+    "verified_runs": [
+      {
+        "run": 1,
+        "arm": "treatment",
+        "log_sha256_verified": "571e32534786633b2e39bd9d3122cd4a633835608ba0f8a70ed5b2a0f6cbffd2",
+        "input_tokens": 180275,
+        "output_tokens": 1474,
+        "correct_under_predeclared_rule": true
+      },
+      {
+        "run": 2,
+        "arm": "baseline",
+        "log_sha256_verified": "53cd42738ecc2617fb9ceb0d76a59f612072f6f425bca7b521062e66aa99d3d0",
+        "input_tokens": 91721,
+        "output_tokens": 1121,
+        "correct_under_predeclared_rule": true
+      },
+      {
+        "run": 3,
+        "arm": "baseline",
+        "log_sha256_verified": "44f77f611fa9dcbaf871556125e407eef86b5e9e56a5caa6b24003262c284f3e",
+        "input_tokens": 85435,
+        "output_tokens": 1156,
+        "correct_under_predeclared_rule": true
+      },
+      {
+        "run": 4,
+        "arm": "treatment",
+        "log_sha256_verified": "df72da34a04553bc2d237812ed5f2479d56b087f05153ed2d504c22d83392741",
+        "input_tokens": 121745,
+        "output_tokens": 1142,
+        "correct_under_predeclared_rule": false
+      }
+    ],
+    "metric": "reported complete-turn input plus output tokens; no byte conversion",
+    "limits": "Exploratory; unequal tool trajectories; no generalization or causal certification. One treatment answer missed rubric facts."
+  },
+  "offline_batch": {
+    "rows": 360,
+    "payload_references_verified": 1080,
+    "results_sha256": "5e837301da0315a3795d8e32e1d1e169d19c630b3982648a5205405f8e36e8d0",
+    "splits": {
+      "development": {
+        "known_payload_baseline_bytes": 69270,
+        "known_payload_treatment_bytes": 64086,
+        "reduction_percent": 7.483759203118234,
+        "source_bytes_equal": true,
+        "independent_cases": 6
+      },
+      "holdout": {
+        "known_payload_baseline_bytes": 5886,
+        "known_payload_treatment_bytes": 4734,
+        "reduction_percent": 19.571865443425075,
+        "source_bytes_equal": true,
+        "independent_cases": 4
+      }
+    },
+    "metric": "known rendered synthetic payload bytes, excludes tool definitions/native framing",
+    "selector_incremental_reduction": 0,
+    "limits": "Two CodeIntel configurations, nonblind holdouts, repetitions not independent tasks; no agent control or measured tokens."
+  },
+  "raw_traces_excluded_from_public_snapshot": true,
+  "new_model_calls": 0,
+  "agent_savings_established": false,
+  "software_production_ready": false
+}

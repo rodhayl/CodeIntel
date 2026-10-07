@@ -1,0 +1,13 @@
+flowchart LR
+  S[Local Python / TS / JS source] --> H[Safe reads + source hashes]
+  H --> G[Immutable generation\nfull rebuild on change]
+  G --> T[tree-sitter literal chunks]
+  T --> F[SQLite / FTS5 + syntax relations]
+  Q[Authored query] --> R[Lexical + symbol + heuristic syntax ranking]
+  F --> R
+  R --> P[Check literal provenance\nomit exact duplicates within packet\nfit complete JSON byte budget]
+  P --> O[JSON packet / optional metadata receipt]
+  S --> V[Verify selected files + spans]
+  O --> V
+  O -. not implemented or evaluated .-> A[Downstream agent / consumer]
+  V --> B[Match now OR reject stale source]

@@ -1,0 +1,35 @@
+{
+  "rules": "Fixed before execution. Literal witnesses required per path (aliases count); absence is corpus-scoped. No rankings changed. Natural questions use exactly their text. rg uses same query with -F -n -i --json and supplies no oracle path. Direct reads use oracle paths and are labelled. All output UTF-8 bytes; no token/cost conversion. These are authored diagnostic questions, no agents.",
+  "sources": {
+    "config.py": "DEFAULT_WINDOW = 17\n",
+    "timer.py": "from config import DEFAULT_WINDOW\ndef deadline(now):\n    return now + DEFAULT_WINDOW\n",
+    "account.py": "def parse(text):\n    return {\"uid\": int(text)}\n",
+    "archive.py": "def parse(text):\n    return {\"entry\": text.strip()}\n",
+    "gross.py": "RATE = .21\ndef fee(amount):\n    return amount * RATE\n",
+    "net.py": "RATE = 0\ndef fee(amount):\n    return amount * RATE\n",
+    "notes.py": "# refund(x) is mentioned in marketing, no code calls it.\n",
+    "refund.py": "def refund(amount):\n    if amount < 0:\n        raise ValueError(\"negative\")\n    return amount\n",
+    "label.js": "export const trim = label => label.trim();\n",
+    "short.py": "XY = \"id\"\nNOTE = \"雪山\"\n"
+  },
+  "cases": [
+    {"id":"natural_refund", "query":"Where does the code reject negative refunds?", "required":[["refund.py","raise ValueError(\"negative\")"]], "budget":4096},
+    {"id":"exact_refund", "query":"refund", "required":[["refund.py","raise ValueError(\"negative\")"]], "budget":4096},
+    {"id":"qualified_ambiguity", "query":"account.parse", "required":[["account.py","int(text)"]], "budget":4096},
+    {"id":"bare_ambiguity", "query":"parse", "required":[["account.py","int(text)"],["archive.py","text.strip()"]], "budget":4096},
+    {"id":"import_and_constant", "query":"deadline", "required":[["timer.py","now + DEFAULT_WINDOW"],["config.py","DEFAULT_WINDOW = 17"]], "budget":4096},
+    {"id":"equal_bodies", "query":"fee", "required":[["gross.py","RATE = .21"],["net.py","RATE = 0"],["gross.py","amount * RATE"],["net.py","amount * RATE"]], "budget":8192},
+    {"id":"short_literal", "query":"id", "required":[["short.py","XY = \"id\""]], "budget":4096},
+    {"id":"unicode_short", "query":"雪山", "required":[["short.py","雪山"]], "budget":4096},
+    {"id":"small_budget", "query":"refund", "required":[["refund.py","raise ValueError(\"negative\")"]], "budget":1024},
+    {"id":"absence", "query":"quux_absent_6729", "required":[], "expect_empty":true, "budget":4096},
+    {"id":"javascript_arrow", "query":"trim", "required":[["label.js","label.trim()"]], "budget":4096}
+  ],
+  "codeintel_cases": [
+    {"id":"natural_verification","query":"Does verification authenticate the snapshot hash?","required":[["lab/retrieval.py","def verify_packet"],["lab/retrieval.py","def _validate_packet_schema"]],"budget":8192},
+    {"id":"exact_verification","query":"verify_packet","required":[["lab/retrieval.py","def verify_packet"]],"budget":4096},
+    {"id":"constants","query":"MAX_INDEX_SOURCE_FILE_BYTES","required":[["core/contracts.py","16 * 1024 * 1024"]],"budget":4096},
+    {"id":"sqlite_policy","query":"generation_fts_sql","required":[["storage/policy.py","tokenize='trigram'"]],"budget":4096},
+    {"id":"absent_real","query":"not_a_codeintel_symbol_726391","required":[],"expect_empty":true,"budget":4096}
+  ]
+}

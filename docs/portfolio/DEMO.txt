@@ -1,0 +1,31 @@
+CodeIntel | inspect code, reject stale context
+Synthetic booking example. No model, account or network call.
+
+1. Ask before indexing: INDEX_REQUIRED
+2. Index: 4 Python/TypeScript/JavaScript files; state outside source.
+3. Find reserve_seats: booking.py:4-10
+   Why: signals=[exact_short_name,lexical]; lexical_score=0.6100; exact_short_name
+   Packet: 1553 / 4096 UTF-8 bytes, including metadata.
+   Identical fragments omitted: 1 (locations retained as aliases)
+   Aliases: duplicate.py; known symbol covered=true
+
+   def reserve_seats(available: int, requested: int) -> int:
+       """Reserve seats after checking inventory and a positive quantity."""
+       if requested <= 0:
+           raise ValueError("requested must be positive")
+       if requested > available:
+           raise ValueError("insufficient inventory")
+       return available + requested
+
+4. Apply the demo's scripted edit: available + requested -> available - requested
+   Only the new synthetic copy is changed; CodeIntel did not diagnose this bug.
+5. Verify the old packet: STALE_SOURCE
+6. Query again: refreshed=true; current source verified.
+   Now: return available - requested
+   Source SHA-256: 76b8ec752230 -> f275310e14b7 (abbreviated)
+   Packet: 2112 / 4096 UTF-8 bytes.
+   Selected fragments: 2; duplicate.py intentionally keeps the old behavior.
+
+Result: PASS | exact source, bounded packets, observable invalidation.
+This demonstrates a retrieval contract, not better agent answers or token/cost savings.
+Use --format json for full packets, hashes and telemetry (the default).

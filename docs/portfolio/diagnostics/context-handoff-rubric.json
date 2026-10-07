@@ -1,0 +1,179 @@
+{
+  "schema": "codeintel-context-handoff-rubric-v1",
+  "frozen_utc": "2026-10-05T16:19:41Z",
+  "sources": {
+    "dispatch.py": "from limits import RETRY_DELAY\n\ndef schedule_retry(now):\n    return now + RETRY_DELAY\n",
+    "limits.py": "RETRY_DELAY = 23\n",
+    "domestic.py": "HANDLING = 4\n\ndef shipment_total(weight):\n    return weight * 3 + HANDLING\n",
+    "overseas.py": "HANDLING = 19\n\ndef shipment_total(weight):\n    return weight * 3 + HANDLING\n",
+    "labels.ts": "function cleanTag(value: string): string { return value.trim().toUpperCase(); }\nexport const shipmentTag = (value: string): string => cleanTag(value);\n",
+    "receipt.py": "def accept_receipt(amount):\n    if amount <= 0:\n        raise ValueError(\"positive receipt required\")\n    return {\"accepted\": amount}\n",
+    "notes.py": "REFERENCE = \"qr\"\nTRAIL = \"星空\"\n",
+    "ledger.py": "def reconcile_ledger(total):\n    total += 0  # numbered reconciliation adjustment\n    total += 1  # numbered reconciliation adjustment\n    total += 2  # numbered reconciliation adjustment\n    total += 3  # numbered reconciliation adjustment\n    total += 4  # numbered reconciliation adjustment\n    total += 5  # numbered reconciliation adjustment\n    total += 6  # numbered reconciliation adjustment\n    total += 7  # numbered reconciliation adjustment\n    total += 8  # numbered reconciliation adjustment\n    total += 9  # numbered reconciliation adjustment\n    total += 10  # numbered reconciliation adjustment\n    total += 11  # numbered reconciliation adjustment\n    total += 12  # numbered reconciliation adjustment\n    total += 13  # numbered reconciliation adjustment\n    total += 14  # numbered reconciliation adjustment\n    total += 15  # numbered reconciliation adjustment\n    total += 16  # numbered reconciliation adjustment\n    total += 17  # numbered reconciliation adjustment\n    total += 18  # numbered reconciliation adjustment\n    total += 19  # numbered reconciliation adjustment\n    total += 20  # numbered reconciliation adjustment\n    total += 21  # numbered reconciliation adjustment\n    total += 22  # numbered reconciliation adjustment\n    total += 23  # numbered reconciliation adjustment\n    total += 24  # numbered reconciliation adjustment\n    total += 25  # numbered reconciliation adjustment\n    total += 26  # numbered reconciliation adjustment\n    total += 27  # numbered reconciliation adjustment\n    total += 28  # numbered reconciliation adjustment\n    total += 29  # numbered reconciliation adjustment\n    total += 30  # numbered reconciliation adjustment\n    total += 31  # numbered reconciliation adjustment\n    total += 32  # numbered reconciliation adjustment\n    total += 33  # numbered reconciliation adjustment\n    total += 34  # numbered reconciliation adjustment\n    total += 35  # numbered reconciliation adjustment\n    total += 36  # numbered reconciliation adjustment\n    total += 37  # numbered reconciliation adjustment\n    total += 38  # numbered reconciliation adjustment\n    total += 39  # numbered reconciliation adjustment\n    total += 40  # numbered reconciliation adjustment\n    total += 41  # numbered reconciliation adjustment\n    total += 42  # numbered reconciliation adjustment\n    total += 43  # numbered reconciliation adjustment\n    total += 44  # numbered reconciliation adjustment\n    total += 45  # numbered reconciliation adjustment\n    total += 46  # numbered reconciliation adjustment\n    total += 47  # numbered reconciliation adjustment\n    total += 48  # numbered reconciliation adjustment\n    total += 49  # numbered reconciliation adjustment\n    total += 50  # numbered reconciliation adjustment\n    total += 51  # numbered reconciliation adjustment\n    total += 52  # numbered reconciliation adjustment\n    total += 53  # numbered reconciliation adjustment\n    total += 54  # numbered reconciliation adjustment\n    total += 55  # numbered reconciliation adjustment\n    total += 56  # numbered reconciliation adjustment\n    total += 57  # numbered reconciliation adjustment\n    total += 58  # numbered reconciliation adjustment\n    total += 59  # numbered reconciliation adjustment\n    total += 60  # numbered reconciliation adjustment\n    total += 61  # numbered reconciliation adjustment\n    total += 62  # numbered reconciliation adjustment\n    total += 63  # numbered reconciliation adjustment\n    total += 64  # numbered reconciliation adjustment\n    total += 65  # numbered reconciliation adjustment\n    total += 66  # numbered reconciliation adjustment\n    total += 67  # numbered reconciliation adjustment\n    total += 68  # numbered reconciliation adjustment\n    total += 69  # numbered reconciliation adjustment\n    total += 70  # numbered reconciliation adjustment\n    total += 71  # numbered reconciliation adjustment\n    total += 72  # numbered reconciliation adjustment\n    total += 73  # numbered reconciliation adjustment\n    total += 74  # numbered reconciliation adjustment\n    total += 75  # numbered reconciliation adjustment\n    total += 76  # numbered reconciliation adjustment\n    total += 77  # numbered reconciliation adjustment\n    total += 78  # numbered reconciliation adjustment\n    total += 79  # numbered reconciliation adjustment\n    total += 80  # numbered reconciliation adjustment\n    total += 81  # numbered reconciliation adjustment\n    total += 82  # numbered reconciliation adjustment\n    total += 83  # numbered reconciliation adjustment\n    total += 84  # numbered reconciliation adjustment\n    if total > 10000:\n        raise ValueError(\"ledger cap reached\")\n    return total\n"
+  },
+  "source_sha256": {
+    "dispatch.py": "45eb3bcd48eafa0051052e3da7dab955fe5ccfecae8670f8e8f0eea7075c2612",
+    "limits.py": "5a3ac12da36280c60a0f9fdf0e6cdc73448b4d7912f7d153ada0390c3e849636",
+    "domestic.py": "bfbb66119eba4e8e418572197d377b94a2f3eec3b17053192d887d55a2c8d58d",
+    "overseas.py": "947f42ace5ee00b02560595963943daa7e1e651491cb69507a917a5345191cd2",
+    "labels.ts": "8e38e9d0d326c581c674493ffdb82a5b9d66305589786445729f41c3086a0f41",
+    "receipt.py": "44124072bd3b4f5c8696f60e67c5e15b5e6b2d549d719ca11555556ea2abd28e",
+    "notes.py": "f36aad6a7a59b91ff678b6708ada2d370468264a4add699f9dea258965e0bb02",
+    "ledger.py": "5c064ae67b9b9ced856be036a88ff3a427b44ad29d7e902a898dac117e668ad0"
+  },
+  "questions": [
+    {
+      "id": "receipt_guard",
+      "question": "Which guard rejects nonpositive receipt amounts?",
+      "query": "accept_receipt",
+      "max_bytes": 4096,
+      "limit": 5,
+      "required": [
+        [
+          "receipt.py",
+          "if amount <= 0:"
+        ],
+        [
+          "receipt.py",
+          "raise ValueError(\"positive receipt required\")"
+        ]
+      ],
+      "expect_empty": false
+    },
+    {
+      "id": "tag_transform",
+      "question": "What transform is used to create a shipment tag?",
+      "query": "shipmentTag",
+      "max_bytes": 4096,
+      "limit": 5,
+      "required": [
+        [
+          "labels.ts",
+          "=> cleanTag(value)"
+        ],
+        [
+          "labels.ts",
+          "value.trim().toUpperCase()"
+        ]
+      ],
+      "expect_empty": false
+    },
+    {
+      "id": "shipment_constant",
+      "question": "Why do equal shipment functions give different totals?",
+      "query": "shipment_total",
+      "max_bytes": 4096,
+      "limit": 5,
+      "required": [
+        [
+          "domestic.py",
+          "HANDLING = 4"
+        ],
+        [
+          "overseas.py",
+          "HANDLING = 19"
+        ],
+        [
+          "domestic.py",
+          "return weight * 3 + HANDLING"
+        ],
+        [
+          "overseas.py",
+          "return weight * 3 + HANDLING"
+        ]
+      ],
+      "expect_empty": false
+    },
+    {
+      "id": "retry_value",
+      "question": "How long after now is the retry scheduled?",
+      "query": "schedule_retry",
+      "max_bytes": 4096,
+      "limit": 5,
+      "required": [
+        [
+          "dispatch.py",
+          "return now + RETRY_DELAY"
+        ],
+        [
+          "limits.py",
+          "RETRY_DELAY = 23"
+        ]
+      ],
+      "expect_empty": false
+    },
+    {
+      "id": "short_literal",
+      "question": "Where is the two-character reference literal qr?",
+      "query": "qr",
+      "max_bytes": 2048,
+      "limit": 5,
+      "required": [
+        [
+          "notes.py",
+          "REFERENCE = \"qr\""
+        ]
+      ],
+      "expect_empty": false
+    },
+    {
+      "id": "qualified_shipment",
+      "question": "What is the domestic shipment expression and handling value?",
+      "query": "domestic.shipment_total",
+      "max_bytes": 4096,
+      "limit": 5,
+      "required": [
+        [
+          "domestic.py",
+          "HANDLING = 4"
+        ],
+        [
+          "domestic.py",
+          "return weight * 3 + HANDLING"
+        ]
+      ],
+      "expect_empty": false
+    },
+    {
+      "id": "capped_ledger",
+      "question": "Which final cap rejects reconciliation?",
+      "query": "reconcile_ledger",
+      "max_bytes": 2048,
+      "limit": 5,
+      "required": [
+        [
+          "ledger.py",
+          "if total > 10000:"
+        ],
+        [
+          "ledger.py",
+          "raise ValueError(\"ledger cap reached\")"
+        ]
+      ],
+      "expect_empty": false
+    },
+    {
+      "id": "absent_control",
+      "question": "Is never_declared_dispatch_916 present as a literal?",
+      "query": "never_declared_dispatch_916",
+      "max_bytes": 4096,
+      "limit": 5,
+      "required": [],
+      "expect_empty": true
+    }
+  ],
+  "arms": [
+    "ranked",
+    "literal_chunks",
+    "literal_files"
+  ],
+  "protocol": {
+    "input": "Identical authored supported-source corpus and literal query; no oracle paths, no follow-up query rewriting.",
+    "output_budget": "Each arm gets the same maximum complete UTF-8 serialized-output bytes, including newline, paths, metadata, discovery and selection. Original question/query is shared input, not counted for any arm.",
+    "literal_files": "Independent casefold substring discovery over sorted complete source files. Whole matching files only; 32 candidates, five selected max. Discovery path and source-sha256 overhead included in output. No truncation to favor a required literal; files that do not fit are omitted.",
+    "measurement": "Literal witnesses at specified locations, not generated answers, semantic correctness, tokens, prices or savings. Absence is a separate literal control.",
+    "order": "Rotate three arm orders by question; no repeated timing conclusions. Cold index build and source bytes are reported separately.",
+    "freeze": "Written and SHA-256 fixed before any new corpus indexing/query; results cannot change queries, budget or rubric.",
+    "bias": "Prospective held-out outputs on fresh authored sources, but task families informed by prior audit. Not blind, representative, external, randomized or an agent study."
+  }
+}

@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant U as Scripted demo
+  participant L as Offline lab
+  participant S as Synthetic source
+  U->>L: Query reserve_seats
+  L->>S: Read + bind selected literal to file/source hashes
+  L-->>U: Bounded JSON packet
+  U->>S: Scripted + to - edit in disposable copy
+  U->>L: Verify old packet
+  L->>S: Re-read selected file
+  L-->>U: STALE_SOURCE
+  U->>L: Query again
+  L->>S: Full fresh snapshot and new generation
+  L-->>U: Updated verified literal
+  Note over U,L: No agent diagnosis, receipt, retention or savings measured

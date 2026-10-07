@@ -1,0 +1,612 @@
+{
+  "schema": "codeintel-historical-evidence-v2",
+  "review_date": "2026-10-04",
+  "historical_evidence_commit": "0ee16e324e714d2ea584b8cd0218377d901f4325",
+  "publication_boundary": "Sanitized measurements and structural metadata only. No conversations, session identifiers, credentials, foreign code or Git history.",
+  "historical_engine_commit": "38c262f64bf82ebb7700c6a495c9d0a5c9d45ffc",
+  "target_repository": "cvMadeEasy",
+  "target_commit": "bbda208a494c1755103c008e6b67e7b723b0fba3",
+  "agy_precompiled": {
+    "date": "2026-09-18",
+    "model_recorded": "gemini-3.8-flash-low",
+    "effort_recorded": "low",
+    "harness_recorded": "AGY4 v0.1.0",
+    "environment": "Historical Linux client run; no new execution",
+    "intervention": "Precompiled Evidence IR plus operating instructions; not autonomous MCP",
+    "tasks": 7,
+    "pairs": 7,
+    "repeats_per_task": 1,
+    "control_first_every_pair": true,
+    "control_tokens": 1700615,
+    "treatment_tokens": 953118,
+    "rows": [
+      {
+        "task": "task_1",
+        "arm": "control",
+        "order": 1,
+        "tokens": 178223,
+        "wall_seconds": 90.18,
+        "raw_usage_git_blob": "671697844ddb873557953ecf95cb0d0509ab3c0b",
+        "duration_seconds": 71.642105488,
+        "input_tokens": 174656,
+        "output_tokens": 3567,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 174981
+      },
+      {
+        "task": "task_1",
+        "arm": "treatment",
+        "order": 2,
+        "tokens": 61442,
+        "wall_seconds": 45.12,
+        "raw_usage_git_blob": "1e18c1c9bc5f209d3d5d1a7950e54ec63755eb01",
+        "duration_seconds": 36.821886495,
+        "input_tokens": 58417,
+        "output_tokens": 3025,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 89489
+      },
+      {
+        "task": "task_2",
+        "arm": "control",
+        "order": 3,
+        "tokens": 133840,
+        "wall_seconds": 105.24,
+        "raw_usage_git_blob": "a264c7ff4b75f09b7566d6376eec2d7beb4c2e68",
+        "duration_seconds": 99.493981902,
+        "input_tokens": 128524,
+        "output_tokens": 5316,
+        "thinking_tokens": 2044,
+        "cache_read_tokens": 394516
+      },
+      {
+        "task": "task_2",
+        "arm": "treatment",
+        "order": 4,
+        "tokens": 98256,
+        "wall_seconds": 75.19,
+        "raw_usage_git_blob": "5268dd5bf1f0a3a97fe8b025ae7a85f01b858d8b",
+        "duration_seconds": 56.752674894,
+        "input_tokens": 94647,
+        "output_tokens": 3609,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 500248
+      },
+      {
+        "task": "task_3",
+        "arm": "control",
+        "order": 5,
+        "tokens": 274569,
+        "wall_seconds": 105.21,
+        "raw_usage_git_blob": "b16248e19c1bcc4d89edc9fa01b90c0b0bc2ac7c",
+        "duration_seconds": 99.180354297,
+        "input_tokens": 269029,
+        "output_tokens": 5540,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 1109699
+      },
+      {
+        "task": "task_3",
+        "arm": "treatment",
+        "order": 6,
+        "tokens": 88426,
+        "wall_seconds": 60.17,
+        "raw_usage_git_blob": "95786f151897a849fa7c8d390947a4d13afa442c",
+        "duration_seconds": 54.176221296,
+        "input_tokens": 84423,
+        "output_tokens": 4003,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 410925
+      },
+      {
+        "task": "task_4",
+        "arm": "control",
+        "order": 7,
+        "tokens": 168590,
+        "wall_seconds": 75.18,
+        "raw_usage_git_blob": "f45ec11ba2020f1a2218c3d0a79321510b9c768f",
+        "duration_seconds": 67.418996084,
+        "input_tokens": 164341,
+        "output_tokens": 4249,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 527885
+      },
+      {
+        "task": "task_4",
+        "arm": "treatment",
+        "order": 8,
+        "tokens": 201442,
+        "wall_seconds": 90.2,
+        "raw_usage_git_blob": "1fcab44972bcc4bfcd7b3ab5b8a28ef7f4723deb",
+        "duration_seconds": 82.60745203,
+        "input_tokens": 197197,
+        "output_tokens": 4245,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 422391
+      },
+      {
+        "task": "task_5",
+        "arm": "control",
+        "order": 9,
+        "tokens": 248680,
+        "wall_seconds": 120.25,
+        "raw_usage_git_blob": "d442f6cd0b0d9f783142acf22e443c7097a523ca",
+        "duration_seconds": 107.177236802,
+        "input_tokens": 241909,
+        "output_tokens": 6771,
+        "thinking_tokens": 3424,
+        "cache_read_tokens": 920541
+      },
+      {
+        "task": "task_5",
+        "arm": "treatment",
+        "order": 10,
+        "tokens": 132278,
+        "wall_seconds": 75.15,
+        "raw_usage_git_blob": "a95c59d906e35f0d38fa521147e4ca1d1d0c089c",
+        "duration_seconds": 60.674887844,
+        "input_tokens": 130675,
+        "output_tokens": 1603,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 239489
+      },
+      {
+        "task": "task_6",
+        "arm": "control",
+        "order": 11,
+        "tokens": 538557,
+        "wall_seconds": 90.17,
+        "raw_usage_git_blob": "3d41b6e170350b2b57c326977dd00ab8c2c9e410",
+        "duration_seconds": 83.882531942,
+        "input_tokens": 534138,
+        "output_tokens": 4419,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 1377912
+      },
+      {
+        "task": "task_6",
+        "arm": "treatment",
+        "order": 12,
+        "tokens": 263279,
+        "wall_seconds": 120.21,
+        "raw_usage_git_blob": "1534b585304b71e712d95af8879422489d5c4afc",
+        "duration_seconds": 109.480416147,
+        "input_tokens": 259490,
+        "output_tokens": 3789,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 710385
+      },
+      {
+        "task": "task_7",
+        "arm": "control",
+        "order": 13,
+        "tokens": 158156,
+        "wall_seconds": 75.15,
+        "raw_usage_git_blob": "ecbf72f2d0a8a68877cd3594fc7057ac7984f2e5",
+        "duration_seconds": 66.303765965,
+        "input_tokens": 154294,
+        "output_tokens": 3862,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 459388
+      },
+      {
+        "task": "task_7",
+        "arm": "treatment",
+        "order": 14,
+        "tokens": 107995,
+        "wall_seconds": 75.15,
+        "raw_usage_git_blob": "de93064abec27dcb597752bcbe28c1ff7d38c147",
+        "duration_seconds": 68.687551169,
+        "input_tokens": 105147,
+        "output_tokens": 2848,
+        "thinking_tokens": 0,
+        "cache_read_tokens": 239862
+      }
+    ],
+    "verification": "14 original usage.total_tokens fields cross-checked; provider tokenization not independently recomputed",
+    "quality": "Historical post-hoc rescoring: 5 equivalent, 1 better, 1 efficiency gain with omission. Not a new blinded quality audit.",
+    "limits": [
+      "Task 4 uses 19.49% more tokens.",
+      "Task 6 uses fewer tokens but recorded duration_seconds rises 83.88 to 109.48; wall_clock_seconds rises 90.17 to 120.21.",
+      "Task 7 omits an abstract base class; the omission is real.",
+      "Cache counters are not additive billing categories; counts do not establish euro cost.",
+      "One repository and one pair per task; no independent repeat, randomization or general causal claim."
+    ],
+    "treatment_change_percent": -43.95451057411584,
+    "reported_counter_definition": "Each recorded total_tokens equals input_tokens + output_tokens. cache_read_tokens is separately reported by AGY4; its relationship to input/billing is not normalized here. The 43.95% reduction applies only to that reported total counter."
+  },
+  "codex_gateway": {
+    "date": "2026-09-18",
+    "gateway_commit": "0e4f106adbba28ca551973beb51dc8ab1ba72c4f",
+    "model_recorded": "gpt-5.6-luna",
+    "effort_recorded": "low",
+    "environment": "Historical Linux; danger-full-access sandbox, approval policy never (recorded historical settings, not instructions)",
+    "intervention": "Gateway plus precompiled Evidence IR plus operating instructions; data-only effect is not isolated",
+    "tasks": 3,
+    "pairs": 3,
+    "repeats_per_task": 1,
+    "control_tokens": 504945,
+    "treatment_tokens": 287417,
+    "rows": [
+      {
+        "task": "task_1",
+        "arm": "control",
+        "tokens": 193387,
+        "input_tokens": 189774,
+        "cached_input_tokens": 151040,
+        "output_tokens": 3613
+      },
+      {
+        "task": "task_1",
+        "arm": "treatment",
+        "tokens": 73814,
+        "input_tokens": 71908,
+        "cached_input_tokens": 57344,
+        "output_tokens": 1906
+      },
+      {
+        "task": "task_3",
+        "arm": "control",
+        "tokens": 168721,
+        "input_tokens": 165104,
+        "cached_input_tokens": 133632,
+        "output_tokens": 3617
+      },
+      {
+        "task": "task_3",
+        "arm": "treatment",
+        "tokens": 132124,
+        "input_tokens": 130269,
+        "cached_input_tokens": 107008,
+        "output_tokens": 1855
+      },
+      {
+        "task": "task_5",
+        "arm": "control",
+        "tokens": 142837,
+        "input_tokens": 141701,
+        "cached_input_tokens": 117248,
+        "output_tokens": 1136
+      },
+      {
+        "task": "task_5",
+        "arm": "treatment",
+        "tokens": 81479,
+        "input_tokens": 80659,
+        "cached_input_tokens": 53248,
+        "output_tokens": 820
+      }
+    ],
+    "verification": "All six original cumulative token_count totals cross-checked. Cached input is a subset; do not add again.",
+    "quality": "Historical post-hoc scorer reported success in all three pairs; treatment task 5 omitted a required file path. Not a new blinded audit.",
+    "limits": [
+      "3 tasks, one run per arm each; no independent repeat or broad generalization.",
+      "Token counts include cached input; not equal to billed cost.",
+      "Strict correctness reassessment was post-hoc; task5 omitted a required path.",
+      "files_inspected lists contain punctuation duplicates and unexpanded brace patterns; do not reuse file-reduction percentage uncritically.",
+      "Release notes mislabel benchmark HTTPX; original run/report target cvMadeEasy."
+    ],
+    "treatment_change_percent": -43.07954331659884,
+    "reported_counter_definition": "Recorded total_tokens is input_tokens + output_tokens. cached_input_tokens is already included within input_tokens. Do not add cached input a second time or equate it with the separate AGY4 cache counter."
+  },
+  "autonomous_mcp": {
+    "date": "2026-09-18",
+    "control_tokens": 494700,
+    "treatment_tokens": 1372738,
+    "tasks": 3,
+    "pairs": 3,
+    "verification": "Historical report totals only; unlike the two preceding rows, not re-counted from raw events in this review.",
+    "interpretation": "Adverse in that setup. Observed discovery/errors and extra native exploration support an overhead concern, not a proven universal causal mechanism.",
+    "treatment_change_percent": 177.48898322215484
+  },
+  "client_matrix": {
+    "date": "2026-09-21",
+    "candidate_commit": "7fcad52fa25a832b7b52bef5161826d494b5eb30",
+    "status": "PARTIAL",
+    "six_tool_pass_clients": [
+      "agy",
+      "fcc-claude"
+    ],
+    "other_clients": "Partial/incomplete records; Windows stdio issue recorded for fcc-opencode. No universal compatibility claim.",
+    "platforms": "Dated Linux and Windows receipts exist for that retired candidate; not current host or production certification.",
+    "receipt_review_date": "2026-10-04",
+    "verification_scope": "Direct immutable machine receipts inspected; no new platform execution or JUnit case recount.",
+    "source_receipts": [
+      {
+        "kind": "platform/linux/result.json",
+        "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/post_v1/client_neutral_multi_agent/validation/final_acceptance_7fcad52/platform/linux/result.json",
+        "git_blob": "0e29dd4f74be9be924dd00771fe772549cb6f0cd",
+        "status": "PASS",
+        "source": {
+          "clean": true,
+          "commit": "7fcad52fa25a832b7b52bef5161826d494b5eb30",
+          "tree": "074ac3471607c6c246ea0143fcaac02946405491"
+        },
+        "platform": {
+          "sys_platform": "linux",
+          "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+          "python_version": "3.12.3"
+        },
+        "counts": {
+          "focused": {
+            "errors": 0,
+            "failures": 0,
+            "junit": {
+              "bytes": 11526,
+              "path": "focused.xml",
+              "sha256": "ae3058ae3ecd81f1d235ea606f0c22e90ce9dc4989efa38441be81940c4f211c"
+            },
+            "passed": 77,
+            "skipped": 0,
+            "tests": 77
+          },
+          "regression": {
+            "errors": 0,
+            "failures": 0,
+            "junit": {
+              "bytes": 428700,
+              "path": "regression.xml",
+              "sha256": "c69701d9f2bfcda89408502f97f8bf234fb1bcad19e5c1bbaf74614a1e05828f"
+            },
+            "passed": 2773,
+            "skipped": 7,
+            "tests": 2780
+          }
+        }
+      },
+      {
+        "kind": "platform/windows/result.json",
+        "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/post_v1/client_neutral_multi_agent/validation/final_acceptance_7fcad52/platform/windows/result.json",
+        "git_blob": "c8743110638c118ffa42f2b3946fdbe1d74eab45",
+        "status": "PASS",
+        "source": {
+          "clean": true,
+          "commit": "7fcad52fa25a832b7b52bef5161826d494b5eb30",
+          "tree": "074ac3471607c6c246ea0143fcaac02946405491"
+        },
+        "platform": {
+          "sys_platform": "win32",
+          "platform": "Windows-11-10.0.26200-SP0",
+          "python_version": "3.12.14"
+        },
+        "counts": {
+          "focused": {
+            "errors": 0,
+            "failures": 0,
+            "junit": {
+              "bytes": 11526,
+              "path": "focused.xml",
+              "sha256": "b868aeca2ed2f1b8ee6ee8a5e7525f853db8f7ea53c29a9423fe4c4117e3e06c"
+            },
+            "passed": 77,
+            "skipped": 0,
+            "tests": 77
+          },
+          "regression": {
+            "errors": 0,
+            "failures": 0,
+            "junit": {
+              "bytes": 531634,
+              "path": "regression.xml",
+              "sha256": "3f2df0a71f90c14ef90369dd39bf2db43dcb2c28773840101dd0a982c1b6c98b"
+            },
+            "passed": 2422,
+            "skipped": 352,
+            "tests": 2774
+          }
+        }
+      },
+      {
+        "kind": "package/core.json",
+        "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/post_v1/client_neutral_multi_agent/validation/final_acceptance_7fcad52/package/core.json",
+        "git_blob": "31e7a2bd38eb9dbca39cf08081478f73c4d5d1ae",
+        "status": "PASS",
+        "source": {
+          "clean": true,
+          "commit": "7fcad52fa25a832b7b52bef5161826d494b5eb30",
+          "tree": "074ac3471607c6c246ea0143fcaac02946405491"
+        },
+        "probe_fields": {
+          "verified_source_files": 141,
+          "version": "1.1.0.dev0",
+          "gateway_absent": true
+        }
+      }
+    ],
+    "platform_limit": "The historical Linux host was WSL2. These are source-bound receipts of retired candidate 7fcad52fa25a832b7b52bef5161826d494b5eb30, not current distribution compatibility."
+  },
+  "october_adverse": {
+    "date": "2026-10-03",
+    "extract": "../reports/portfolio-readiness/public/historical-measurements.json",
+    "extract_sha256": "91d31de75bf44eec99a77fc5c75106cc55700b0b81d01f8cdecb9fff5dfaa0b0",
+    "source_commit": null,
+    "identity_limit": "Evidence publication and target commit are known; the CodeIntel runtime source commit is not attested in the retained report.",
+    "model_recorded": "gpt-5.6-luna",
+    "effort_recorded": "low",
+    "tasks": 1,
+    "pairs": 2,
+    "control_tokens": 179433,
+    "treatment_tokens": 304636,
+    "quality": "One treatment answer omitted the ParseResult.copy_with to urlparse relationship required by the predeclared rubric.",
+    "offline_bytes": {
+      "development": {
+        "known_payload_baseline_bytes": 69270,
+        "known_payload_treatment_bytes": 64086,
+        "reduction_percent": 7.483759203118234,
+        "source_bytes_equal": true,
+        "independent_cases": 6
+      },
+      "holdout": {
+        "known_payload_baseline_bytes": 5886,
+        "known_payload_treatment_bytes": 4734,
+        "reduction_percent": 19.571865443425075,
+        "source_bytes_equal": true,
+        "independent_cases": 4
+      }
+    },
+    "treatment_change_percent": 69.77701983470152,
+    "evidence_commit": "fac962cb14bb0656431c54c1ed6b5c8a98500a5a",
+    "evidence_url": "https://github.com/rodhayl/trialsMemoryAgent/blob/fac962cb14bb0656431c54c1ed6b5c8a98500a5a/agent_exchange/native_counterfactual_ab_20261003/README.md",
+    "target_repository": "HTTPX",
+    "target_commit": "b5addb64f0161ff6bfe94c124ef76f6a1fba5254",
+    "order": [
+      "treatment",
+      "control",
+      "control",
+      "treatment"
+    ],
+    "report_url": "https://github.com/rodhayl/trialsMemoryAgent/blob/fac962cb14bb0656431c54c1ed6b5c8a98500a5a/agent_exchange/native_counterfactual_ab_20261003/report.json",
+    "report_git_blob": "d48f0308bb9f73576b1241c5bb320d40eb885779",
+    "report_row_arithmetic_checked_date": "2026-10-04",
+    "verification_scope": "Arithmetic independently recomputed from all four stored report rows; not a fresh raw-log recount, runtime execution or correctness audit.",
+    "recorded_elapsed_seconds": {
+      "control": 57.73,
+      "treatment": 83.29,
+      "treatment_change_percent": 44.275073618569174,
+      "limit": "Reported run elapsed_seconds; no new claim that cold indexing/preparation or every end-to-end overhead is included."
+    },
+    "command_calls": {
+      "control": 8,
+      "treatment": 14,
+      "treatment_change_percent": 75
+    },
+    "treatment_raw_source_escape_commands": {
+      "run_1": 3,
+      "run_4": 0
+    },
+    "preliminary_capture_failure": {
+      "included_in_four_run_ab_totals": false,
+      "source_url": "https://github.com/rodhayl/trialsMemoryAgent/blob/fac962cb14bb0656431c54c1ed6b5c8a98500a5a/agent_exchange/native_counterfactual_ab_20261003/README.md",
+      "source_git_blob": "4e9e914eae6d4eae471671a81a9218272056bef3",
+      "evidence_level": "Retained README narrative; original failed raw events not re-counted in this pass.",
+      "observation": "An earlier read-only capture attempt could not write the private capture; two rewritten commands exited 1 while its session summary reported zero hook failures.",
+      "interpretation": "A zero hook-failure counter is not sufficient evidence of successful helper-command execution; this preliminary attempt is separate from the four A/B rows."
+    },
+    "report_rows": [
+      {
+        "run": 1,
+        "arm": "treatment",
+        "command_calls": 8,
+        "elapsed_seconds": 54.489,
+        "failed_commands": 0,
+        "input_tokens": 180275,
+        "output_tokens": 1474,
+        "total_tokens": 181749,
+        "cached_input_tokens": 135936,
+        "uncached_input_tokens": 44339,
+        "raw_source_escape_commands": 3,
+        "correct_under_predeclared_rule": true
+      },
+      {
+        "run": 2,
+        "arm": "baseline",
+        "command_calls": 4,
+        "elapsed_seconds": 33.551,
+        "failed_commands": 0,
+        "input_tokens": 91721,
+        "output_tokens": 1121,
+        "total_tokens": 92842,
+        "cached_input_tokens": 67328,
+        "uncached_input_tokens": 24393,
+        "raw_source_escape_commands": 0,
+        "correct_under_predeclared_rule": true
+      },
+      {
+        "run": 3,
+        "arm": "baseline",
+        "command_calls": 4,
+        "elapsed_seconds": 24.179,
+        "failed_commands": 0,
+        "input_tokens": 85435,
+        "output_tokens": 1156,
+        "total_tokens": 86591,
+        "cached_input_tokens": 62208,
+        "uncached_input_tokens": 23227,
+        "raw_source_escape_commands": 0,
+        "correct_under_predeclared_rule": true
+      },
+      {
+        "run": 4,
+        "arm": "treatment",
+        "command_calls": 6,
+        "elapsed_seconds": 28.801,
+        "failed_commands": 0,
+        "input_tokens": 121745,
+        "output_tokens": 1142,
+        "total_tokens": 122887,
+        "cached_input_tokens": 107776,
+        "uncached_input_tokens": 13969,
+        "raw_source_escape_commands": 0,
+        "correct_under_predeclared_rule": false
+      }
+    ]
+  },
+  "invalidated_or_restricted_claims": [
+    "7/7 tasks saved tokens: false; task 4 increased usage.",
+    "Zero history replay: unsupported; injected prompt context can remain in subsequent turns.",
+    "Zero runtime failure: unsupported; deterministic preparation can fail.",
+    "Product value proven/general quality parity: exceeds exploratory and post-hoc evidence.",
+    "Gateway benchmark was HTTPX: contradicted by original target cvMadeEasy.",
+    "41.94% fewer files inspected: invalid metric; command parser retained semicolon duplicates and unexpanded brace patterns.",
+    "Cached token counts equal cost savings: unsupported without prices and category semantics."
+  ],
+  "private_source_references": [
+    {
+      "path": "agent_exchange/post_v1/client_neutral_multi_agent/validation/final_acceptance_7fcad52/FINAL_ACCEPTANCE_REPORT.md",
+      "git_blob": "f75bfd2ff34c6e84b916cb72517bd64fb9426ebc",
+      "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/post_v1/client_neutral_multi_agent/validation/final_acceptance_7fcad52/FINAL_ACCEPTANCE_REPORT.md",
+      "access": "private; original contents are not redistributed"
+    },
+    {
+      "path": "agent_exchange/product_value/20260918/STRENGTHENED_PRODUCT_VALUE_REPORT.md",
+      "git_blob": "23a94b2a132b4fcb0d0e71f1432434a94cbaed94",
+      "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/product_value/20260918/STRENGTHENED_PRODUCT_VALUE_REPORT.md",
+      "access": "private; original contents are not redistributed"
+    },
+    {
+      "path": "agent_exchange/product_value/20260918/codex/codex_ab_summary.json",
+      "git_blob": "63d97db80354342286859e638d126fb3e7e913d6",
+      "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/product_value/20260918/codex/codex_ab_summary.json",
+      "access": "private; original contents are not redistributed"
+    },
+    {
+      "path": "agent_exchange/product_value/20260918/codex_precompiled/CODEX_PRECOMPILED_CONTEXT_REPORT.md",
+      "git_blob": "2ccd7bc975f76b4aff4242c5f9de3c5e5501644c",
+      "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/product_value/20260918/codex_precompiled/CODEX_PRECOMPILED_CONTEXT_REPORT.md",
+      "access": "private; original contents are not redistributed"
+    },
+    {
+      "path": "agent_exchange/product_value/20260918/codex_precompiled/strict_codex_rescoring.json",
+      "git_blob": "f2fd8d8fd33ece8d7369caafeafd34fbf6446165",
+      "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/product_value/20260918/codex_precompiled/strict_codex_rescoring.json",
+      "access": "private; original contents are not redistributed"
+    },
+    {
+      "path": "agent_exchange/product_value/20260918/codex_precompiled/summary.json",
+      "git_blob": "417db72c79177e4adc42da4b6a365f0a9c20974b",
+      "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/product_value/20260918/codex_precompiled/summary.json",
+      "access": "private; original contents are not redistributed"
+    },
+    {
+      "path": "agent_exchange/product_value/20260918/phase1_runs.jsonl",
+      "git_blob": "3ce3c489e89ef8011a271fd42d6ef8721826ff9d",
+      "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/product_value/20260918/phase1_runs.jsonl",
+      "access": "private; original contents are not redistributed"
+    },
+    {
+      "path": "agent_exchange/product_value/20260918/recomputed_summary.json",
+      "git_blob": "7c88d00fb067f70d93632a0b26639f2fd035a183",
+      "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/product_value/20260918/recomputed_summary.json",
+      "access": "private; original contents are not redistributed"
+    },
+    {
+      "path": "agent_exchange/product_value/20260918/strict_phase1_rescoring.json",
+      "git_blob": "e0cf12cd526034f68c17b1a94cb63edf05d78737",
+      "url": "https://github.com/rodhayl/trialsMemoryAgent/blob/0ee16e324e714d2ea584b8cd0218377d901f4325/agent_exchange/product_value/20260918/strict_phase1_rescoring.json",
+      "access": "private; original contents are not redistributed"
+    }
+  ],
+  "new_model_calls": 0,
+  "current_runtime_agent_savings_proven": false,
+  "software_production_ready": false
+}
